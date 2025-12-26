@@ -98,6 +98,15 @@ Possible Improvements:
 - Mobile-first layout refinements
 - Custom chart colors per category
 
+## Screenshots:
+
+### Authentications
+![Login Page] (login.png)
+![Register Page] (register.png)
+
+### Dashboard
+![Dashboard Overview[(dashboard.png)
+
 
 
 
