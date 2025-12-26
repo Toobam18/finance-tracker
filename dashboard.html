@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Finance Tracker</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="toastContainer"></div>
+
+  <div class="dashboard-container">
+    <!-- Header -->
+    <header class="dashboard-header">
+      <h1>💰 Finance Tracker</h1>
+      <div class="header-right">
+        <span class="user-email" id="userEmail">Loading...</span>
+        <button type="button" id="logoutBtn" class="btn btn-secondary">Log out</button>
+      </div>
+    </header>
+
+    <!-- Month Picker -->
+    <div class="month-picker">
+      <label for="monthPicker">Select Month:</label>
+      <input type="month" id="monthPicker">
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="summary-grid">
+      <div class="summary-card">
+        <div class="label">Total Income</div>
+        <div class="value" id="totalIncome">$0.00</div>
+      </div>
+      <div class="summary-card">
+        <div class="label">Total Expenses</div>
+        <div class="value" id="totalExpenses">$0.00</div>
+      </div>
+      <div class="summary-card">
+        <div class="label">Net Balance</div>
+        <div class="value" id="netBalance">$0.00</div>
+      </div>
+    </div>
+
+    <!-- Add Transaction -->
+    <section class="section" id="transactionForm">
+      <div class="section-header">
+        <h2 id="txFormTitle">Add Transaction</h2>
+      </div>
+      <div class="section-body">
+        <div class="tx-form-grid">
+          <div class="form-group">
+            <label for="txType">Type</label>
+            <select id="txType" required>
+              <option value="expense">Expense</option>
+              <option value="income">Income</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="txAmount">Amount</label>
+            <input type="number" id="txAmount" step="0.01" min="0" placeholder="0.00" required>
+          </div>
+          <div class="form-group">
+            <label for="txCategory">Category</label>
+            <input type="text" id="txCategory" placeholder="e.g., Groceries" required>
+          </div>
+          <div class="form-group">
+            <label for="txDate">Date</label>
+            <input type="date" id="txDate" required>
+          </div>
+          <div class="form-group">
+            <label for="txDescription">Description (optional)</label>
+            <input type="text" id="txDescription" placeholder="Notes...">
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="button" id="addTxBtn" class="btn btn-primary">Add Transaction</button>
+          <button type="button" id="cancelEditBtn" class="btn btn-secondary hidden">Cancel</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Transactions Table -->
+    <section class="section">
+      <div class="section-header">
+        <h2>Transactions</h2>
+        <button type="button" id="clearAllBtn" class="btn btn-danger">Clear All</button>
+      </div>
+      <div class="section-body">
+        <div class="table-wrapper">
+          <table id="transactionsTable">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Category</th>
+                <th>Description</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Expense Chart -->
+    <section class="section">
+      <div class="section-header">
+        <h2>Spending Breakdown</h2>
+      </div>
+      <div class="section-body">
+        <div class="chart-container">
+          <div class="chart-canvas-wrapper">
+            <canvas id="expenseChart"></canvas>
+          </div>
+          <div id="chartLegend"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Budgets -->
+    <section class="section">
+      <div class="section-header">
+        <h2>Budgets</h2>
+      </div>
+      <div class="section-body">
+        <div class="form-inline mb-4">
+          <div class="form-group">
+            <label for="budgetCategory">Category</label>
+            <select id="budgetCategory" required>
+              <option value="" disabled selected>Select category</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="budgetAmount">Monthly Amount</label>
+            <input type="number" id="budgetAmount" step="0.01" min="0" placeholder="0.00" required>
+          </div>
+          <button type="button" id="saveBudgetBtn" class="btn btn-primary">Save Budget</button>
+        </div>
+
+        <div class="table-wrapper">
+          <table id="budgetsTable">
+            <thead>
+              <tr>
+                <th>Category</th>
+                <th>Budget</th>
+                <th>Spent</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div id="budgetWarnings"></div>
+      </div>
+    </section>
+
+    <!-- Recurring Rules -->
+    <section class="section">
+      <div class="section-header">
+        <h2>Recurring Rules</h2>
+        <button type="button" id="toggleRecurringForm" class="btn btn-secondary">+ Add Recurring</button>
+      </div>
+      <div class="section-body">
+        <div id="recurringFormFields" class="hidden mb-4">
+          <div class="tx-form-grid">
+            <div class="form-group">
+              <label for="recName">Name</label>
+              <input type="text" id="recName" placeholder="e.g., Rent" required>
+            </div>
+            <div class="form-group">
+              <label for="recType">Type</label>
+              <select id="recType" required>
+                <option value="expense">Expense</option>
+                <option value="income">Income</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="recAmount">Amount</label>
+              <input type="number" id="recAmount" step="0.01" min="0" placeholder="0.00" required>
+            </div>
+            <div class="form-group">
+              <label for="recCategory">Category</label>
+              <input type="text" id="recCategory" placeholder="e.g., Housing" required>
+            </div>
+            <div class="form-group">
+              <label for="recDay">Day of Month (1-28)</label>
+              <input type="number" id="recDay" min="1" max="28" value="1" required>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="button" id="saveRecurringBtn" class="btn btn-primary">Save Rule</button>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table id="recurringTable">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Category</th>
+                <th>Day</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Chart.js + Supabase v2 - Official CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.47.10/dist/umd/supabase.min.js"></script>
+  <script src="js/supabaseClient.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>
